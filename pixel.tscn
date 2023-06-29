@@ -1,0 +1,126 @@
+[gd_scene load_steps=21 format=3 uid="uid://bhseo3j3xddcy"]
+
+[ext_resource type="Shader" path="res://toondither.gdshader" id="1_ffcyf"]
+[ext_resource type="Script" path="res://CameraMove.gd" id="1_mxcxg"]
+[ext_resource type="Shader" path="res://clouds.gdshader" id="1_nvae0"]
+[ext_resource type="Shader" path="res://depth.gdshader" id="2_fyn2e"]
+[ext_resource type="Script" path="res://spin.gd" id="2_hr7t2"]
+[ext_resource type="Texture2D" uid="uid://dq4w7uoxt4t4q" path="res://bayer16tile2.png" id="2_tax56"]
+[ext_resource type="Texture2D" uid="uid://idcjpyyw4kvi" path="res://BlueNoise64Tiled.png" id="2_whf0d"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_i2bn6"]
+render_priority = 0
+shader = ExtResource("1_nvae0")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_dj4ie"]
+material = SubResource("ShaderMaterial_i2bn6")
+subdivide_width = 4
+subdivide_depth = 4
+
+[sub_resource type="Gradient" id="Gradient_pwd4f"]
+colors = PackedColorArray(0.23598, 0.612097, 0.158434, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_l2vl0"]
+gradient = SubResource("Gradient_pwd4f")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3vv2t"]
+render_priority = 0
+shader = ExtResource("1_ffcyf")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/use_attenuation = true
+shader_parameter/use_dither = true
+shader_parameter/dither_size = 1
+shader_parameter/dither_texture = ExtResource("2_whf0d")
+shader_parameter/cuts = 4
+shader_parameter/wrap = 0.0
+shader_parameter/steepness = 1.0
+shader_parameter/clamp_diffuse_to_max = true
+shader_parameter/use_ramp = true
+shader_parameter/ramp = SubResource("GradientTexture1D_l2vl0")
+shader_parameter/use_specular = false
+shader_parameter/specular_strength = 1.0
+shader_parameter/specular_shininess = 16.0
+
+[sub_resource type="TorusMesh" id="TorusMesh_iwhuw"]
+material = SubResource("ShaderMaterial_3vv2t")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2t3xa"]
+render_priority = 0
+shader = ExtResource("1_ffcyf")
+shader_parameter/albedo = Color(0.729412, 0.729412, 0.729412, 1)
+shader_parameter/use_attenuation = true
+shader_parameter/use_dither = false
+shader_parameter/dither_size = 1
+shader_parameter/dither_texture = ExtResource("2_tax56")
+shader_parameter/cuts = 3
+shader_parameter/wrap = 0.0
+shader_parameter/steepness = 1.0
+shader_parameter/clamp_diffuse_to_max = false
+shader_parameter/use_ramp = false
+shader_parameter/use_specular = true
+shader_parameter/specular_strength = 1.0
+shader_parameter/specular_shininess = 16.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_pw26k"]
+material = SubResource("ShaderMaterial_2t3xa")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y0nsc"]
+render_priority = 0
+shader = ExtResource("2_fyn2e")
+shader_parameter/shadows_enabled = true
+shader_parameter/highlights_enabled = true
+shader_parameter/shadow_strength = 0.4
+shader_parameter/highlight_strength = 0.1
+shader_parameter/highlight_color = Color(1, 1, 1, 1)
+shader_parameter/shadow_color = Color(0, 0, 0, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_ksg5a"]
+material = SubResource("ShaderMaterial_y0nsc")
+size = Vector2(2, 2)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_fafkk"]
+
+[sub_resource type="Sky" id="Sky_t4qjc"]
+sky_material = SubResource("ProceduralSkyMaterial_fafkk")
+
+[sub_resource type="Environment" id="Environment_6osh5"]
+sky = SubResource("Sky_t4qjc")
+ambient_light_source = 1
+sdfgi_use_occlusion = true
+
+[node name="Node3D" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00055629, 0.00137395, -0.000114202)
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_dj4ie")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D2"]
+transform = Transform3D(0.141569, 0.0723854, 0.0215217, -0.0194498, 0.0791345, -0.138218, -0.0729694, 0.119343, 0.0785963, 0, 0.395891, 0)
+mesh = SubResource("TorusMesh_iwhuw")
+skeleton = NodePath("../..")
+script = ExtResource("2_hr7t2")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D2"]
+transform = Transform3D(0.303291, 0, 0, 0, 0.303291, 0, 0, 0, 0.303291, 0, 0.0461471, 0)
+mesh = SubResource("BoxMesh_pw26k")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.707107, -0.353553, 0.612373, 0, 0.866026, 0.5, -0.707107, -0.353553, 0.612373, 1.673, 1.532, 1.642)
+projection = 1
+fov = 17.4
+far = 15.0
+script = ExtResource("1_mxcxg")
+
+[node name="PostProcessing" type="MeshInstance3D" parent="Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.53674e-07, -0.125603)
+cast_shadow = 0
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_ksg5a")
+skeleton = NodePath("../..")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.858468, 0.512867, 0, -0.512867, 0.858468, 0, 1.53181, 2.93542)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_6osh5")
