@@ -1,7 +1,6 @@
 shader_type spatial;
 
 uniform float noise_strength = 1.0;
-uniform vec4 albedo : source_color;
 uniform float shadow_strenght = 0.95;
 uniform sampler2D noise_texture : source_color, filter_linear_mipmap, repeat_enable;
 uniform vec2 uv_scale = vec2(0.1);
@@ -18,8 +17,8 @@ varying vec3 _vertex;
 void fragment(){
 	
 	_vertex = VERTEX;
-
-	ALBEDO = albedo.rgb;
+	
+	ALPHA=0.1;
 }
 
 void light() {
@@ -54,11 +53,10 @@ void light() {
 	clouds *= 0.9;
 	clouds += 0.1;
 	
-	//To sample shadow with different blur param, check the tutorial linked in the description
-	//float blur = 1.;
-	//if(clouds < 1.0) blur += 10. * smoothstep(0.2, 1.0, rg.r) ;	
-	//float shadow = get_directional_shadow(LIGHT_INDEX, _vertex, blur);
-	float shadow = ATTENUATION;
+	float blur = 1.;
+	if(clouds < 1.0) blur += 10. * smoothstep(0.2, 1.0, rg.r) ;
+	float shadow = get_directional_shadow(0, _vertex, blur);
+	//float shadow = ATTENUATION;
 	
 	if( clouds < 1.0 && shadow < 1.0) {
 		shadow *= 1.0 - 0.2 * smoothstep(0.1, 1.0, rg.r) ;
@@ -66,6 +64,6 @@ void light() {
 		clouds = min(clouds, shadow);
 	}
 
-	DIFFUSE_LIGHT += clamp(dot(NORMAL, LIGHT), 0.0, 1.0) * clouds * shadow * ALBEDO * LIGHT_COLOR;
+	DIFFUSE_LIGHT -= clouds * shadow;
 	}
 }
