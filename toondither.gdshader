@@ -81,6 +81,8 @@ void light() {
 		diffuse *= diffuse_stepped;
 	}
 	
+	diffuse *= min(attenuation, 1.0);
+	
 	if (clamp_diffuse_to_max) {
 		// Clamp diffuse to max for multiple light sources.
 		DIFFUSE_LIGHT = max(DIFFUSE_LIGHT, diffuse);

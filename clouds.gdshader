@@ -55,7 +55,7 @@ void light() {
 	
 	float blur = 1.;
 	if(clouds < 1.0) blur += 10. * smoothstep(0.2, 1.0, rg.r) ;
-	float shadow = get_directional_shadow(0, _vertex, blur);
+	float shadow = sample_directional_shadow(0, _vertex, blur);
 	//float shadow = ATTENUATION;
 	
 	if( clouds < 1.0 && shadow < 1.0) {
@@ -64,6 +64,6 @@ void light() {
 		clouds = min(clouds, shadow);
 	}
 
-	DIFFUSE_LIGHT -= clouds * shadow;
+	DIFFUSE_LIGHT -= min(clouds * shadow, 0.4);
 	}
 }

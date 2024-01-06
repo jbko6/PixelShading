@@ -1,81 +1,44 @@
-[gd_scene load_steps=23 format=3 uid="uid://bhseo3j3xddcy"]
+[gd_scene load_steps=38 format=3 uid="uid://bhseo3j3xddcy"]
 
-[ext_resource type="Shader" path="res://grass.gdshader" id="1_5w5ab"]
+[ext_resource type="Material" uid="uid://dc5qwqsv4hpuv" path="res://clouds.tres" id="1_336u5"]
 [ext_resource type="Shader" path="res://toondither.gdshader" id="1_ffcyf"]
 [ext_resource type="Script" path="res://CameraMove.gd" id="1_mxcxg"]
+[ext_resource type="Shader" path="res://colorramp.gdshader" id="1_xragc"]
+[ext_resource type="Shader" path="res://grass.gdshader" id="2_4m5ws"]
 [ext_resource type="Shader" path="res://depth.gdshader" id="2_fyn2e"]
 [ext_resource type="Script" path="res://spin.gd" id="2_hr7t2"]
 [ext_resource type="Texture2D" uid="uid://dq4w7uoxt4t4q" path="res://bayer16tile2.png" id="2_tax56"]
 [ext_resource type="Texture2D" uid="uid://idcjpyyw4kvi" path="res://BlueNoise64Tiled.png" id="2_whf0d"]
+[ext_resource type="Texture2D" uid="uid://c7deim61n6r0u" path="res://grassnoise.png" id="3_lfnl7"]
+[ext_resource type="ArrayMesh" uid="uid://dedlsyl4g5qtp" path="res://rocks.obj" id="11_yraus"]
+[ext_resource type="ArrayMesh" uid="uid://biejjro2xdg6a" path="res://rocksobject.res" id="12_05pv0"]
+[ext_resource type="ArrayMesh" uid="uid://ceu24kravmr2v" path="res://streetlamp.obj" id="13_tcaot"]
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_cgye1"]
-noise_type = 3
-frequency = 0.013
-domain_warp_enabled = true
+[sub_resource type="Gradient" id="Gradient_kemxq"]
+colors = PackedColorArray(0.115223, 0.289289, 0.188509, 1, 0.382672, 0.541572, 0.32047, 1)
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_yqc7x"]
-width = 500
-height = 500
-seamless = true
-noise = SubResource("FastNoiseLite_cgye1")
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_tg30b"]
+gradient = SubResource("Gradient_kemxq")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kycjm"]
+render_priority = 0
+shader = ExtResource("1_xragc")
+shader_parameter/use_directional_attenuation = false
+shader_parameter/use_omni_attentuation = false
+shader_parameter/use_spot_attentuation = false
+shader_parameter/color_ramp = SubResource("GradientTexture1D_tg30b")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i2bn6"]
 render_priority = 0
-shader = ExtResource("1_5w5ab")
-shader_parameter/albedo = Color(0.603922, 0.862745, 0.560784, 1)
-shader_parameter/noise = SubResource("NoiseTexture2D_yqc7x")
+next_pass = SubResource("ShaderMaterial_kycjm")
+shader = ExtResource("2_4m5ws")
+shader_parameter/albedo = Color(0.407843, 0.407843, 0.407843, 1)
+shader_parameter/noise = ExtResource("3_lfnl7")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_dj4ie"]
 material = SubResource("ShaderMaterial_i2bn6")
 subdivide_width = 4
 subdivide_depth = 4
-
-[sub_resource type="Gradient" id="Gradient_pwd4f"]
-colors = PackedColorArray(0.23598, 0.612097, 0.158434, 1, 1, 1, 1, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_l2vl0"]
-gradient = SubResource("Gradient_pwd4f")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_3vv2t"]
-render_priority = 0
-shader = ExtResource("1_ffcyf")
-shader_parameter/albedo = Color(1, 1, 1, 1)
-shader_parameter/use_attenuation = true
-shader_parameter/cuts = 4
-shader_parameter/wrap = 0.0
-shader_parameter/steepness = 1.0
-shader_parameter/clamp_diffuse_to_max = true
-shader_parameter/use_ramp = true
-shader_parameter/ramp = SubResource("GradientTexture1D_l2vl0")
-shader_parameter/use_dither = true
-shader_parameter/dither_size = 1
-shader_parameter/dither_texture = ExtResource("2_whf0d")
-shader_parameter/use_specular = false
-shader_parameter/specular_strength = 1.0
-shader_parameter/specular_shininess = 16.0
-
-[sub_resource type="TorusMesh" id="TorusMesh_iwhuw"]
-material = SubResource("ShaderMaterial_3vv2t")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_2t3xa"]
-render_priority = 0
-shader = ExtResource("1_ffcyf")
-shader_parameter/albedo = Color(0.729412, 0.729412, 0.729412, 1)
-shader_parameter/use_attenuation = true
-shader_parameter/cuts = 3
-shader_parameter/wrap = 0.0
-shader_parameter/steepness = 1.0
-shader_parameter/clamp_diffuse_to_max = false
-shader_parameter/use_ramp = false
-shader_parameter/use_dither = false
-shader_parameter/dither_size = 1
-shader_parameter/dither_texture = ExtResource("2_tax56")
-shader_parameter/use_specular = true
-shader_parameter/specular_strength = 1.0
-shader_parameter/specular_shininess = 16.0
-
-[sub_resource type="BoxMesh" id="BoxMesh_pw26k"]
-material = SubResource("ShaderMaterial_2t3xa")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_y0nsc"]
 render_priority = 0
@@ -101,39 +64,179 @@ sky = SubResource("Sky_t4qjc")
 ambient_light_source = 1
 sdfgi_use_occlusion = true
 
+[sub_resource type="Gradient" id="Gradient_pwd4f"]
+colors = PackedColorArray(0.298923, 0.516842, 0.836578, 1, 0.794131, 0.857915, 0.95133, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_l2vl0"]
+gradient = SubResource("Gradient_pwd4f")
+
+[sub_resource type="Gradient" id="Gradient_ld4k3"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_0r51c"]
+gradient = SubResource("Gradient_ld4k3")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3vv2t"]
+render_priority = 0
+next_pass = ExtResource("1_336u5")
+shader = ExtResource("1_ffcyf")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/use_attenuation = true
+shader_parameter/cuts = 4
+shader_parameter/wrap = 0.0
+shader_parameter/steepness = 1.0
+shader_parameter/clamp_diffuse_to_max = true
+shader_parameter/use_ramp = true
+shader_parameter/ramp = SubResource("GradientTexture1D_l2vl0")
+shader_parameter/use_dither = true
+shader_parameter/dither_size = 1
+shader_parameter/dither_texture = ExtResource("2_whf0d")
+shader_parameter/use_specular = true
+shader_parameter/specular_strength = 0.088
+shader_parameter/specular_shininess = 14.242
+shader_parameter/specular_map = SubResource("GradientTexture1D_0r51c")
+
+[sub_resource type="TorusMesh" id="TorusMesh_iwhuw"]
+material = SubResource("ShaderMaterial_3vv2t")
+
+[sub_resource type="Gradient" id="Gradient_yk0kh"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.563492, 0.761905)
+colors = PackedColorArray(0.617454, 0.617455, 0.617455, 1, 0.907942, 0.907942, 0.907942, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_asvrs"]
+gradient = SubResource("Gradient_yk0kh")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2t3xa"]
+render_priority = 0
+next_pass = ExtResource("1_336u5")
+shader = ExtResource("1_ffcyf")
+shader_parameter/albedo = Color(0.156863, 0.443137, 0.666667, 1)
+shader_parameter/use_attenuation = true
+shader_parameter/cuts = 3
+shader_parameter/wrap = 0.0
+shader_parameter/steepness = 1.0
+shader_parameter/clamp_diffuse_to_max = true
+shader_parameter/use_ramp = true
+shader_parameter/ramp = SubResource("GradientTexture1D_asvrs")
+shader_parameter/use_dither = false
+shader_parameter/dither_size = 1
+shader_parameter/dither_texture = ExtResource("2_tax56")
+shader_parameter/use_specular = true
+shader_parameter/specular_strength = 1.0
+shader_parameter/specular_shininess = 16.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_pw26k"]
+material = SubResource("ShaderMaterial_2t3xa")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fdjm1"]
+render_priority = 0
+shader = ExtResource("2_fyn2e")
+shader_parameter/shadows_enabled = true
+shader_parameter/highlights_enabled = true
+shader_parameter/shadow_strength = 0.4
+shader_parameter/highlight_strength = 0.1
+shader_parameter/highlight_color = Color(1, 1, 1, 1)
+shader_parameter/shadow_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Gradient" id="Gradient_7sx70"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.188525, 0.606557)
+colors = PackedColorArray(0.135004, 0.0331537, 0.233483, 1, 0.251322, 0.101211, 0.369374, 1, 0.0928063, 0.252956, 0.537195, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_38biu"]
+gradient = SubResource("Gradient_7sx70")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q5jiw"]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_fdjm1")
+shader = ExtResource("1_ffcyf")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/use_attenuation = true
+shader_parameter/cuts = 3
+shader_parameter/wrap = 0.0
+shader_parameter/steepness = 1.0
+shader_parameter/clamp_diffuse_to_max = false
+shader_parameter/use_ramp = true
+shader_parameter/ramp = SubResource("GradientTexture1D_38biu")
+shader_parameter/use_dither = false
+shader_parameter/dither_size = 1
+shader_parameter/use_specular = true
+shader_parameter/specular_strength = 1.0
+shader_parameter/specular_shininess = 16.0
+
 [node name="Node3D" type="Node3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00055629, 0.00137395, -0.000114202)
 
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+[node name="grass" type="MeshInstance3D" parent="."]
 mesh = SubResource("PlaneMesh_dj4ie")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D2"]
-transform = Transform3D(0.141569, 0.0723854, 0.0215217, -0.0194498, 0.0791345, -0.138218, -0.0729694, 0.119343, 0.0785963, 0, 0.395891, 0)
-mesh = SubResource("TorusMesh_iwhuw")
-skeleton = NodePath("../..")
-script = ExtResource("2_hr7t2")
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D2"]
-transform = Transform3D(0.303291, 0, 0, 0, 0.303291, 0, 0, 0, 0.303291, 0, 0.0461471, 0)
-mesh = SubResource("BoxMesh_pw26k")
-
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(0.707107, -0.353553, 0.612373, 0, 0.866026, 0.5, -0.707107, -0.353553, 0.612373, 1.673, 1.532, 1.642)
+transform = Transform3D(0.707107, -0.353553, 0.612373, 0, 0.866026, 0.5, -0.707107, -0.353553, 0.612373, 1.588, 1.532, 1.642)
 projection = 1
 fov = 17.4
-far = 7.18
+far = 16.0
 script = ExtResource("1_mxcxg")
 
 [node name="PostProcessing" type="MeshInstance3D" parent="Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.53674e-07, -0.125603)
+visible = false
 cast_shadow = 0
 extra_cull_margin = 16384.0
 mesh = SubResource("QuadMesh_ksg5a")
 skeleton = NodePath("../..")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.858468, 0.512867, 0, -0.512867, 0.858468, 0, 1.53181, 2.93542)
+transform = Transform3D(1, 0, 0, 0, 0.858065, 0.513541, 0, -0.513541, 0.858065, 0, 1.53181, 2.93542)
+light_angular_distance = 0.5
 shadow_enabled = true
+shadow_opacity = 0.63
+shadow_blur = 0.697
+directional_shadow_mode = 0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_6osh5")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.632638, 0.774448, 0, -0.774448, 0.632638, -0.0438429, 1.20136, 0.852874)
+visible = false
+spot_angle = 25.0
+
+[node name="rocks" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.270677, 0, 0.0422563, 0, 0.273956, 0, -0.0422563, 0, 0.270677, -0.712435, 0.0025349, 0)
+visible = false
+mesh = ExtResource("11_yraus")
+
+[node name="donut" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.141569, 0.0723854, 0.0215217, -0.0194498, 0.0791345, -0.138218, -0.0729694, 0.119343, 0.0785963, 0, 0.395891, 0)
+mesh = SubResource("TorusMesh_iwhuw")
+script = ExtResource("2_hr7t2")
+
+[node name="stone" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.303291, 0, 0, 0, 0.303291, 0, 0, 0, 0.303291, 0, 0.0461471, 0)
+mesh = SubResource("BoxMesh_pw26k")
+skeleton = NodePath("../grass")
+
+[node name="pilar" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.0919854, 0, 0, 0, 0.454958, 0, 0, 0, 0.0919854, 0.315962, 0.211671, 0)
+mesh = SubResource("BoxMesh_pw26k")
+skeleton = NodePath("../stone")
+
+[node name="leaningpilar" type="MeshInstance3D" parent="pilar"]
+transform = Transform3D(0.0429641, -3.8906, 0, 0.24406, 0.684898, 0, 0, 0, 0.303291, 2.37752, -0.271479, 0)
+mesh = SubResource("BoxMesh_pw26k")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.699494, 0, 0, 0, 0.699494, 0, 0, 0, 0.699494, -0.943912, 0, 0)
+mesh = ExtResource("12_05pv0")
+
+[node name="Streetlamp" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.173374, 0, 0, 0, 0.173374, 0, 0, 0, 0.173374, -0.231623, 0.0534802, 0.741895)
+material_override = SubResource("ShaderMaterial_q5jiw")
+mesh = ExtResource("13_tcaot")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Streetlamp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0633901, 5.16141, -0.0176325)
+light_size = 0.091
+shadow_enabled = true
+omni_range = 1.94392
